@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Juego Adultos Mayores — Memoria del Aeropuerto ✈️</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --petrol:  #1B5C6B;
+  --teal:    #3A8FA0;
+  --beige:   #D9C9A8;
+  --cream:   #F5F0E8;
+  --dark:    #1A2E35;
+  --mid:     #5A6E76;
+  --gold:    #C9A84C;
+  --white:   #FFFFFF;
+  --soft-green: #4CAF50;
+  --card-back: linear-gradient(135deg, #1B5C6B 0%, #3A8FA0 100%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(27,92,107,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(201,168,76,0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+}
+
+/* BRAND */
+.brand { text-align: center; }
+.brand-icon { font-size: 1.8rem; }
+.brand-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem; color: var(--petrol);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* CARD BASE */
+.panel {
+  background: var(--white);
+  border-radius: 24px;
+  box-shadow: 0 4px 28px rgba(27,92,107,0.1);
+  width: 100%;
+}
+
+/* START SCREEN */
+.start-inner { padding: 36px 28px; text-align: center; }
+.start-icon { font-size: 4.5rem; display: block; margin-bottom: 16px; }
+.start-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; color: var(--dark); line-height: 1.2; margin-bottom: 12px;
+}
+.start-title span { color: var(--petrol); }
+.start-subtitle {
+  font-size: 1rem; color: var(--mid); line-height: 1.6; margin-bottom: 24px;
+}
+.how-box {
+  background: var(--cream);
+  border-radius: 16px; padding: 18px;
+  text-align: left; margin-bottom: 24px;
+}
+.how-box h3 {
+  font-size: 0.85rem; font-weight: 700; color: var(--petrol);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;
+}
+.how-step {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 10px;
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--petrol); color: white;
+  font-weight: 700; font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.step-text { font-size: 0.92rem; color: var(--dark); line-height: 1.4; }
+
+.diff-label {
+  font-size: 0.82rem; font-weight: 700; color: var(--mid);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+}
+.diff-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 24px;
+}
+.diff-btn {
+  padding: 14px 8px;
+  background: var(--cream);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  cursor: pointer; text-align: center;
+  transition: all 0.18s;
+  font-family: 'DM Sans', sans-serif;
+}
+.diff-btn.selected { border-color: var(--petrol); background: rgba(27,92,107,0.08); }
+.diff-btn:active { transform: scale(0.96); }
+.diff-emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+.diff-name  { font-size: 0.78rem; font-weight: 700; color: var(--petrol); text-transform: uppercase; letter-spacing: 0.5px; }
+.diff-pairs { font-size: 0.7rem; color: var(--mid); margin-top: 2px; }
+
+.go-btn {
+  width: 100%;
+  background: var(--petrol); color: white; border: none;
+  border-radius: 50px; padding: 18px;
+  font-size: 1.1rem; font-weight: 700;
+  cursor: pointer; transition: transform 0.15s;
+  box-shadow: 0 6px 24px rgba(27,92,107,0.3);
+  font-family: 'DM Sans', sans-serif;
+}
+.go-btn:active { transform: scale(0.97); }
+
+/* STATS BAR */
+.stats-bar {
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 16px 12px;
+}
+.stat { text-align: center; }
+.stat-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; color: var(--petrol); display: block;
+}
+.stat-lbl { font-size: 0.7rem; font-weight: 700; color: var(--mid); text-transform: uppercase; letter-spacing: 1px; }
+.stat-divider { width: 1px; height: 40px; background: var(--beige); }
+
+/* HINT BANNER */
+.hint-banner {
+  background: rgba(27,92,107,0.07);
+  border-radius: 14px; padding: 12px 16px;
+  width: 100%;
+  font-size: 0.9rem; color: var(--petrol); font-weight: 600; text-align: center;
+}
+
+/* GRID */
+.mem-grid {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 4px 0;
+}
+.mem-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.mem-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.mem-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* FLIP CARD */
+.flip-wrap {
+  perspective: 600px;
+  cursor: pointer;
+  aspect-ratio: 0.75;
+  -webkit-tap-highlight-color: transparent;
+}
+.flip-inner {
+  width: 100%; height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+}
+.flip-wrap.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-wrap.matched .flip-inner { transform: rotateY(180deg); }
+
+.flip-face {
+  position: absolute; inset: 0;
+  border-radius: 16px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 8px;
+  overflow: hidden;
+}
+
+/* BACK FACE */
+.flip-face.back {
+  background: var(--card-back);
+  box-shadow: 0 3px 12px rgba(27,92,107,0.25);
+}
+.back-pattern {
+  position: absolute; inset: 0; opacity: 0.15;
+  background: repeating-linear-gradient(45deg,
+    transparent 0, transparent 8px,
+    rgba(255,255,255,0.3) 8px, rgba(255,255,255,0.3) 10px);
+  border-radius: 16px;
+}
+.back-icon { font-size: 2rem; position: relative; z-index: 1; }
+.back-brand {
+  font-size: 0.55rem; font-weight: 700; color: rgba(255,255,255,0.6);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  position: relative; z-index: 1; margin-top: 4px;
+}
+
+/* FRONT FACE */
+.flip-face.front {
+  background: var(--white);
+  transform: rotateY(180deg);
+  border: 2px solid var(--beige);
+  box-shadow: 0 3px 12px rgba(27,92,107,0.1);
+  gap: 6px;
+}
+.flip-wrap.matched .flip-face.front {
+  background: rgba(76,175,80,0.08);
+  border-color: var(--soft-green);
+}
+.card-emoji { font-size: 2rem; }
+.card-word {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; color: var(--petrol);
+  font-weight: 700; text-align: center; line-height: 1.2;
+}
+.card-type {
+  font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; padding: 3px 8px; border-radius: 20px;
+}
+.card-type.en { background: rgba(27,92,107,0.1); color: var(--petrol); }
+.card-type.es { background: rgba(201,168,76,0.2); color: #8B6914; }
+
+/* MATCH SPARKLE */
+.flip-wrap.matched .flip-face.front::after {
+  content: '✓';
+  position: absolute; top: 6px; right: 8px;
+  font-size: 1rem; color: var(--soft-green);
+  font-weight: 700;
+}
+
+/* RESULTS */
+.results-inner { padding: 36px 28px; text-align: center; }
+.result-trophy { font-size: 5rem; display: block; margin-bottom: 12px; animation: pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.result-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; color: var(--dark); margin-bottom: 6px;
+}
+.result-time {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem; color: var(--petrol); display: block; margin: 8px 0;
+}
+.result-sub { font-size: 0.95rem; color: var(--mid); line-height: 1.6; margin-bottom: 24px; }
+.result-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 24px;
+}
+.res-item {
+  background: var(--cream); border-radius: 14px; padding: 16px 10px;
+}
+.res-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--petrol); }
+.res-lbl { font-size: 0.72rem; font-weight: 700; color: var(--mid); text-transform: uppercase; letter-spacing: 1px; }
+.btn-replay {
+  width: 100%; background: var(--petrol); color: white; border: none;
+  border-radius: 50px; padding: 16px;
+  font-size: 1.05rem; font-weight: 700; cursor: pointer; margin-bottom: 10px;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-menu {
+  width: 100%; background: var(--cream); color: var(--petrol); border: none;
+  border-radius: 50px; padding: 14px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.branding-foot {
+  color: var(--mid); font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="brand-icon">✈</div>
+    <div class="brand-text">Aeropuerto Sin Miedo</div>
+  </div>
+
+  <!-- START -->
+  <div class="panel" id="startPanel">
+    <div class="start-inner">
+      <span class="start-icon">🃏</span>
+      <h1 class="start-title">Memoria del<br><span>Aeropuerto</span></h1>
+      <p class="start-subtitle">Encontrá cada palabra en inglés con su significado en español. ¡Aprendés jugando!</p>
+
+      <div class="how-box">
+        <h3>¿Cómo se juega?</h3>
+        <div class="how-step">
+          <div class="step-num">1</div>
+          <div class="step-text">Tocás una carta para darla vuelta y ver lo que dice</div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">2</div>
+          <div class="step-text">Buscás la carta que hace pareja: el inglés con su traducción</div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">3</div>
+          <div class="step-text">¡Encontrás todos los pares y ganás!</div>
+        </div>
+      </div>
+
+      <div class="diff-label">Elegí la dificultad</div>
+      <div class="diff-grid">
+        <button class="diff-btn selected" onclick="selectDiff(0,this)">
+          <span class="diff-emoji">🟢</span>
+          <div class="diff-name">Fácil</div>
+          <div class="diff-pairs">6 pares</div>
+        </button>
+        <button class="diff-btn" onclick="selectDiff(1,this)">
+          <span class="diff-emoji">🟡</span>
+          <div class="diff-name">Normal</div>
+          <div class="diff-pairs">8 pares</div>
+        </button>
+        <button class="diff-btn" onclick="selectDiff(2,this)">
+          <span class="diff-emoji">🔴</span>
+          <div class="diff-name">Difícil</div>
+          <div class="diff-pairs">12 pares</div>
+        </button>
+      </div>
+      <button class="go-btn" onclick="startGame()">¡Jugar! ✈</button>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="panel stats-bar" id="statsBar" style="display:none;">
+    <div class="stat">
+      <span class="stat-val" id="statPairs">0/6</span>
+      <span class="stat-lbl">Pares</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-val" id="statMoves">0</span>
+      <span class="stat-lbl">Intentos</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-val" id="statTime">0:00</span>
+      <span class="stat-lbl">Tiempo</span>
+    </div>
+  </div>
+
+  <!-- HINT -->
+  <div class="hint-banner" id="hintBanner" style="display:none;">
+    👆 Tocá una carta para darla vuelta
+  </div>
+
+  <!-- GRID -->
+  <div class="mem-grid" id="memGrid" style="display:none;"></div>
+
+  <!-- RESULTS -->
+  <div class="panel" id="resultsPanel" style="display:none;">
+    <div class="results-inner">
+      <span class="result-trophy" id="resTrophy">🏆</span>
+      <h2 class="result-title" id="resTitle">¡Lo lograste!</h2>
+      <span class="result-time" id="resTime">1:24</span>
+      <p class="result-sub" id="resSub">¡Completaste el juego!</p>
+      <div class="result-grid">
+        <div class="res-item">
+          <div class="res-num" id="resMoves">14</div>
+          <div class="res-lbl">Intentos</div>
+        </div>
+        <div class="res-item">
+          <div class="res-num" id="resPairs">6</div>
+          <div class="res-lbl">Pares</div>
+        </div>
+      </div>
+      <button class="btn-replay" onclick="replayGame()">Jugar otra vez 🔄</button>
+      <button class="btn-menu" onclick="showMenu()">Cambiar dificultad</button>
+    </div>
+  </div>
+
+  <div class="branding-foot">✈ Aeropuerto Sin Miedo</div>
+</div>
+
+<script>
+const ALL_PAIRS = [
+  { en: 'Check-in',       es: 'Registrarse',      emoji: '✅' },
+  { en: 'Boarding Pass',  es: 'Tarjeta de embarque', emoji: '🎫' },
+  { en: 'Gate',           es: 'Puerta',           emoji: '🚪' },
+  { en: 'Boarding',       es: 'Embarque',         emoji: '✈️' },
+  { en: 'Delayed',        es: 'Demorado',         emoji: '⏰' },
+  { en: 'On Time',        es: 'En horario',       emoji: '✓' },
+  { en: 'Cancelled',      es: 'Cancelado',        emoji: '❌' },
+  { en: 'Baggage Claim',  es: 'Retiro de equipaje', emoji: '🛄' },
+  { en: 'Customs',        es: 'Aduana',           emoji: '🛃' },
+  { en: 'Immigration',    es: 'Migraciones',      emoji: '🛂' },
+  { en: 'Departures',     es: 'Salidas',          emoji: '🛫' },
+  { en: 'Arrivals',       es: 'Llegadas',         emoji: '🛬' },
+  { en: 'Final Call',     es: 'Último llamado',   emoji: '📢' },
+  { en: 'Carry-on',       es: 'Equipaje de mano', emoji: '🎒' },
+];
+
+const DIFF_CONFIG = [
+  { pairs: 6,  cols: 3 },  // easy  — 12 cards, 3 cols
+  { pairs: 8,  cols: 4 },  // medium — 16 cards, 4 cols
+  { pairs: 12, cols: 4 },  // hard  — 24 cards, 4 cols
+];
+
+let diff = 0;
+let cards = [];
+let flipped = [];
+let matched = [];
+let moves = 0;
+let timer = null;
+let seconds = 0;
+let canFlip = true;
+
+function selectDiff(d, el) {
+  diff = d;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function startGame() {
+  const cfg = DIFF_CONFIG[diff];
+  const pairs = [...ALL_PAIRS].sort(() => Math.random() - 0.5).slice(0, cfg.pairs);
+
+  // Build card data: en + es for each pair
+  cards = [];
+  pairs.forEach((p, i) => {
+    cards.push({ id: i, type: 'en', text: p.en, emoji: p.emoji, pairId: i });
+    cards.push({ id: i + cfg.pairs, type: 'es', text: p.es, emoji: p.emoji, pairId: i });
+  });
+  cards.sort(() => Math.random() - 0.5);
+
+  flipped = []; matched = []; moves = 0; seconds = 0; canFlip = true;
+
+  // UI
+  document.getElementById('startPanel').style.display    = 'none';
+  document.getElementById('resultsPanel').style.display  = 'none';
+  document.getElementById('statsBar').style.display      = 'flex';
+  document.getElementById('hintBanner').style.display    = 'block';
+  document.getElementById('memGrid').style.display       = 'grid';
+
+  const grid = document.getElementById('memGrid');
+  grid.className = `mem-grid cols-${cfg.cols}`;
+  grid.innerHTML = '';
+
+  cards.forEach((card, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'flip-wrap';
+    wrap.dataset.idx = idx;
+    wrap.innerHTML = `
+      <div class="flip-inner">
+        <div class="flip-face back">
+          <div class="back-pattern"></div>
+          <div class="back-icon">✈</div>
+          <div class="back-brand">ASM</div>
+        </div>
+        <div class="flip-face front">
+          <div class="card-emoji">${card.emoji}</div>
+          <div class="card-word">${card.text}</div>
+          <div class="card-type ${card.type}">${card.type === 'en' ? '🇬🇧 inglés' : '🇦🇷 español'}</div>
+        </div>
+      </div>`;
+    wrap.addEventListener('click', () => flipCard(idx, wrap));
+    grid.appendChild(wrap);
+  });
+
+  updateStats();
+
+  // Start timer
+  clearInterval(timer);
+  timer = setInterval(() => {
+    seconds++;
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    document.getElementById('statTime').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  }, 1000);
+}
+
+function flipCard(idx, el) {
+  if (!canFlip) return;
+  if (el.classList.contains('flipped') || el.classList.contains('matched')) return;
+  if (flipped.length >= 2) return;
+
+  el.classList.add('flipped');
+  flipped.push({ idx, el, card: cards[idx] });
+  document.getElementById('hintBanner').textContent = flipped.length === 1
+    ? '👆 Ahora buscá su pareja'
+    : '🔍 Revisando...';
+
+  if (flipped.length === 2) {
+    moves++;
+    canFlip = false;
+    updateStats();
+    checkMatch();
+  }
+}
+
+function checkMatch() {
+  const [a, b] = flipped;
+  const isMatch = a.card.pairId === b.card.pairId && a.card.type !== b.card.type;
+
+  setTimeout(() => {
+    if (isMatch) {
+      a.el.classList.add('matched');
+      b.el.classList.add('matched');
+      a.el.classList.remove('flipped');
+      b.el.classList.remove('flipped');
+      matched.push(a.card.pairId);
+
+      document.getElementById('hintBanner').textContent =
+        `✅ ¡Pareja encontrada! "${a.card.type==='en'?a.card.text:b.card.text}" = "${a.card.type==='es'?a.card.text:b.card.text}"`;
+
+      if (matched.length === DIFF_CONFIG[diff].pairs) {
+        setTimeout(showResults, 700);
+      } else {
+        setTimeout(() => { canFlip = true; }, 300);
+      }
+    } else {
+      // flip back
+      a.el.classList.remove('flipped');
+      b.el.classList.remove('flipped');
+      document.getElementById('hintBanner').textContent = '😅 No era... ¡Intentá de nuevo!';
+      setTimeout(() => {
+        canFlip = true;
+        document.getElementById('hintBanner').textContent = '👆 Tocá una carta para darla vuelta';
+      }, 600);
+    }
+    flipped = [];
+    updateStats();
+  }, 900);
+}
+
+function updateStats() {
+  const cfg = DIFF_CONFIG[diff];
+  document.getElementById('statPairs').textContent = `${matched.length}/${cfg.pairs}`;
+  document.getElementById('statMoves').textContent = moves;
+}
+
+function showResults() {
+  clearInterval(timer);
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  const timeStr = `${m}:${s.toString().padStart(2,'0')}`;
+  const cfg = DIFF_CONFIG[diff];
+
+  let trophy, title, sub;
+  const ideal = cfg.pairs * 2;
+  if (moves <= ideal + 2)       { trophy='🏆'; title='¡Memoria de elefante!'; sub='Increíble. Encontraste todo casi sin errores. ¡Sos un campeón!'; }
+  else if (moves <= ideal * 1.5){ trophy='🥇'; title='¡Muy bien hecho!'; sub='Excelente memoria. Cada vuelo va a ser más fácil para vos.'; }
+  else                           { trophy='🎉'; title='¡Lo lograste!'; sub='Lo completaste. Seguí practicando y vas a mejorar aún más.'; }
+
+  document.getElementById('resTrophy').textContent  = trophy;
+  document.getElementById('resTitle').textContent   = title;
+  document.getElementById('resTime').textContent    = timeStr;
+  document.getElementById('resSub').textContent     = sub;
+  document.getElementById('resMoves').textContent   = moves;
+  document.getElementById('resPairs').textContent   = cfg.pairs;
+
+  document.getElementById('statsBar').style.display    = 'none';
+  document.getElementById('hintBanner').style.display  = 'none';
+  document.getElementById('memGrid').style.display     = 'none';
+  document.getElementById('resultsPanel').style.display= 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function replayGame() {
+  document.getElementById('resultsPanel').style.display = 'none';
+  startGame();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showMenu() {
+  clearInterval(timer);
+  document.getElementById('resultsPanel').style.display = 'none';
+  document.getElementById('statsBar').style.display     = 'none';
+  document.getElementById('hintBanner').style.display   = 'none';
+  document.getElementById('memGrid').style.display      = 'none';
+  document.getElementById('startPanel').style.display   = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>

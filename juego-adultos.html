@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Juego Adultos — Quiz del Aeropuerto ✈️</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --petrol:  #1B5C6B;
+  --teal:    #3A8FA0;
+  --beige:   #D9C9A8;
+  --cream:   #F5F0E8;
+  --dark:    #1A2E35;
+  --mid:     #4A6572;
+  --success: #4CAF50;
+  --error:   #E05252;
+  --gold:    #C9A84C;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BACKGROUND PATTERN */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(27,92,107,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(58,143,160,0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+
+/* HEADER */
+.brand {
+  text-align: center;
+  padding: 8px 0;
+}
+.brand-plane { font-size: 1.6rem; }
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; color: var(--petrol);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* CARD BASE */
+.card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(27,92,107,0.1);
+  width: 100%;
+}
+
+/* START SCREEN */
+.start-screen { padding: 36px 28px; text-align: center; }
+.start-icon { font-size: 4rem; margin-bottom: 16px; display: block; }
+.start-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; color: var(--dark); line-height: 1.2;
+}
+.start-title em { color: var(--petrol); font-style: normal; }
+.start-desc {
+  color: var(--mid); font-size: 0.95rem; line-height: 1.6;
+  margin: 16px 0 24px;
+}
+.levels-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px; margin-bottom: 28px;
+}
+.level-chip {
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 14px 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.level-chip.selected {
+  border-color: var(--petrol);
+  background: rgba(27,92,107,0.08);
+}
+.level-chip:active { transform: scale(0.96); }
+.level-emoji { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+.level-name {
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--petrol); text-transform: uppercase; letter-spacing: 1px;
+}
+.level-count { font-size: 0.7rem; color: var(--mid); margin-top: 2px; }
+
+.start-btn {
+  width: 100%;
+  background: var(--petrol);
+  color: white; border: none;
+  border-radius: 50px;
+  padding: 16px;
+  font-size: 1.05rem; font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 20px rgba(27,92,107,0.35);
+  font-family: 'DM Sans', sans-serif;
+}
+.start-btn:active { transform: scale(0.97); }
+
+/* PROGRESS BAR */
+.progress-bar-wrap {
+  width: 100%;
+  padding: 16px 20px 0;
+}
+.progress-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.progress-label { font-size: 0.78rem; font-weight: 700; color: var(--mid); }
+.progress-score {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; color: var(--petrol);
+}
+.progress-track {
+  height: 8px;
+  background: var(--cream);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--petrol), var(--teal));
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* QUESTION CARD */
+.q-card { padding: 24px 22px 20px; }
+.q-chapter {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.72rem; font-weight: 700;
+  color: var(--teal); letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.q-number {
+  font-size: 0.78rem; color: var(--mid); font-weight: 600;
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 1.08rem; color: var(--dark);
+  font-weight: 600; line-height: 1.5;
+}
+
+/* OPTIONS */
+.options-list {
+  width: 100%;
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 0 0 4px;
+}
+.option-btn {
+  width: 100%;
+  background: white;
+  border: 2px solid var(--beige);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+}
+.option-btn:active { transform: scale(0.98); }
+.option-letter {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; color: var(--petrol);
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+.option-text { font-size: 0.95rem; color: var(--dark); font-weight: 500; line-height: 1.4; }
+
+.option-btn.correct {
+  border-color: var(--success);
+  background: rgba(76,175,80,0.06);
+}
+.option-btn.correct .option-letter {
+  background: var(--success); color: white;
+}
+.option-btn.wrong {
+  border-color: var(--error);
+  background: rgba(224,82,82,0.06);
+}
+.option-btn.wrong .option-letter {
+  background: var(--error); color: white;
+}
+.option-btn.disabled { cursor: default; }
+
+/* EXPLANATION */
+.explanation {
+  width: 100%;
+  background: rgba(27,92,107,0.07);
+  border-left: 4px solid var(--petrol);
+  border-radius: 0 12px 12px 0;
+  padding: 14px 16px;
+  font-size: 0.88rem; line-height: 1.5; color: var(--dark);
+  display: none;
+}
+.explanation.show { display: block; }
+.explanation strong { color: var(--petrol); }
+
+/* NEXT BUTTON */
+.next-btn {
+  width: 100%;
+  background: var(--petrol);
+  color: white; border: none;
+  border-radius: 50px;
+  padding: 14px;
+  font-size: 1rem; font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s;
+  font-family: 'DM Sans', sans-serif;
+  display: none;
+}
+.next-btn.show { display: block; }
+.next-btn:active { transform: scale(0.97); }
+
+/* RESULTS SCREEN */
+.results-card { padding: 36px 28px; text-align: center; }
+.result-emoji { font-size: 5rem; display: block; margin-bottom: 16px; }
+.result-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; color: var(--dark);
+}
+.result-score-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem; color: var(--petrol);
+  display: block; margin: 12px 0 4px;
+}
+.result-desc { color: var(--mid); font-size: 0.95rem; line-height: 1.6; margin: 8px 0 24px; }
+.result-breakdown {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 24px;
+}
+.breakdown-item {
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 16px 12px;
+}
+.breakdown-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; color: var(--petrol);
+}
+.breakdown-lbl { font-size: 0.75rem; color: var(--mid); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.replay-btn {
+  width: 100%;
+  background: var(--petrol); color: white; border: none;
+  border-radius: 50px; padding: 16px;
+  font-size: 1.05rem; font-weight: 700;
+  cursor: pointer; margin-bottom: 10px;
+  font-family: 'DM Sans', sans-serif;
+}
+.change-btn {
+  width: 100%;
+  background: var(--cream); color: var(--petrol); border: none;
+  border-radius: 50px; padding: 14px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.branding-foot {
+  color: var(--mid); font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding-bottom: 8px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="brand-plane">✈</div>
+    <div class="brand-name">Aeropuerto Sin Miedo</div>
+  </div>
+
+  <!-- START -->
+  <div class="card start-screen" id="startScreen">
+    <span class="start-icon">🧠</span>
+    <h1 class="start-title">Quiz del<br><em>Aeropuerto</em></h1>
+    <p class="start-desc">Poné a prueba lo que aprendiste en la guía. Preguntas reales sobre documentos, equipaje, migraciones y mucho más.</p>
+
+    <div class="levels-grid">
+      <div class="level-chip selected" onclick="selectLevel(0, this)">
+        <span class="level-emoji">🟢</span>
+        <div class="level-name">Básico</div>
+        <div class="level-count">Viajero nuevo</div>
+      </div>
+      <div class="level-chip" onclick="selectLevel(1, this)">
+        <span class="level-emoji">🟡</span>
+        <div class="level-name">Intermedio</div>
+        <div class="level-count">Algo de práctica</div>
+      </div>
+      <div class="level-chip" onclick="selectLevel(2, this)">
+        <span class="level-emoji">🔴</span>
+        <div class="level-name">Experto</div>
+        <div class="level-count">Viajero frecuente</div>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">¡Empezar el quiz! →</button>
+  </div>
+
+  <!-- GAME SCREENS (hidden initially) -->
+  <div id="gameArea" style="display:none; width:100%; display:none; flex-direction:column; gap:14px; align-items:center;">
+    <div class="progress-bar-wrap card" style="padding:16px 20px;">
+      <div class="progress-meta">
+        <span class="progress-label" id="progressLabel">Pregunta 1 de 10</span>
+        <span class="progress-score" id="progressScore">0 pts</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="card q-card" id="questionCard">
+      <div class="q-chapter" id="qChapter">✈ Capítulo</div>
+      <div class="q-number" id="qNumber">Pregunta 1</div>
+      <div class="q-text" id="qText">...</div>
+    </div>
+
+    <div class="options-list" id="optionsList"></div>
+
+    <div class="explanation" id="explanation"></div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Siguiente pregunta →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card results-card" id="resultsScreen" style="display:none;">
+    <span class="result-emoji" id="resultEmoji">🏆</span>
+    <h2 class="result-title" id="resultTitle">¡Excelente!</h2>
+    <span class="result-score-big" id="resultScore">85 pts</span>
+    <p class="result-desc" id="resultDesc">Descripción del resultado.</p>
+    <div class="result-breakdown">
+      <div class="breakdown-item">
+        <div class="breakdown-num" id="breakCorrect">8</div>
+        <div class="breakdown-lbl">Correctas</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-num" id="breakWrong">2</div>
+        <div class="breakdown-lbl">Incorrectas</div>
+      </div>
+    </div>
+    <button class="replay-btn" onclick="replayQuiz()">Jugar otra vez 🔄</button>
+    <button class="change-btn" onclick="showStart()">Cambiar nivel</button>
+  </div>
+
+  <div class="branding-foot">✈ Aeropuerto Sin Miedo — La guía práctica</div>
+</div>
+
+<script>
+const ALL_QUESTIONS = {
+  0: [ // BÁSICO
+    { cap:'📋 Cap. 1 — Documentos', q:'¿Qué documento siempre necesitás para viajar al extranjero?', opts:['Solo el DNI','El pasaporte vigente','Una carta de tu médico','El recibo de la tarjeta de crédito'], correct:1, exp:'El pasaporte es el documento oficial para viajes internacionales. Muchos países exigen además que tenga al menos 6 meses de vigencia.' },
+    { cap:'🧳 Cap. 2 — Equipaje', q:'¿Cuántos mililitros pueden tener los envases de líquidos en el equipaje de mano?', opts:['500 ml','1000 ml','100 ml','250 ml'], correct:2, exp:'La regla internacional es: envases de máximo 100 ml, todos dentro de una bolsa transparente de 1 litro.' },
+    { cap:'⏰ Cap. 3 — Llegada', q:'¿Cuánto tiempo antes de un vuelo internacional conviene llegar al aeropuerto?', opts:['30 minutos','1 hora','3 horas','6 horas'], correct:2, exp:'Para vuelos internacionales se recomienda llegar 3 horas antes. El check-in, migraciones y seguridad llevan tiempo.' },
+    { cap:'✅ Cap. 4 — Check-in', q:'¿Qué obtenés cuando hacés el check-in?', opts:['El pasaporte renovado','La tarjeta de embarque','El seguro de viaje','Un mapa del aeropuerto'], correct:1, exp:'El check-in te da la tarjeta de embarque (boarding pass), que es el documento para subir al avión.' },
+    { cap:'🔍 Cap. 5 — Seguridad', q:'¿Qué tenés que sacar en el control de seguridad?', opts:['Solo los zapatos','La laptop, cinturón y líquidos','Solo el pasaporte','Nada, pasa todo junto'], correct:1, exp:'En seguridad generalmente hay que sacar la notebook, el cinturón, los zapatos y colocar los líquidos en la bandeja por separado.' },
+    { cap:'🛂 Cap. 6 — Migraciones', q:'¿Cuál es la respuesta correcta si el oficial te pregunta "What is the purpose of your visit?"', opts:['I don\'t understand','I\'m traveling for tourism','My name is Ana','I have a connection'], correct:1, exp:'"I\'m traveling for tourism" significa "vengo por turismo". Es la respuesta más común y siempre válida para viajes de placer.' },
+    { cap:'🚪 Cap. 7 — Puerta', q:'¿Qué significa "Gate" en el aeropuerto?', opts:['Aduana','Sala de espera general','Puerta de embarque','Cinta de equipaje'], correct:2, exp:'"Gate" es la puerta específica desde donde embarcarás al avión. La encontrás en tu tarjeta de embarque y en las pantallas.' },
+    { cap:'✈ Cap. 9 — Vuelo', q:'¿Qué hay que hacer con el celular antes del despegue?', opts:['Apagarlo completamente','Ponerlo en modo avión','Dejarlo en silencio','No pasa nada, usarlo normal'], correct:1, exp:'El modo avión desactiva las señales inalámbricas. Es obligatorio durante el vuelo por razones de seguridad.' },
+    { cap:'🛄 Cap. 11 — Llegada', q:'¿Qué significa "Baggage Claim"?', opts:['Control de pasaportes','Retiro de equipaje','Aduana','Sala de conexiones'], correct:1, exp:'"Baggage Claim" es la zona donde retirás tu valija al llegar. Buscá el número de tu vuelo en las pantallas para saber qué cinta.' },
+    { cap:'🌍 Cap. 12 — Vocabulario', q:'¿Qué significa "Delayed" en una pantalla del aeropuerto?', opts:['En horario','Cancelado','Demorado','Embarcando'], correct:2, exp:'"Delayed" significa que el vuelo está demorado, es decir, no sale a la hora prevista. "On time" sería lo contrario: en horario.' },
+  ],
+  1: [ // INTERMEDIO
+    { cap:'📋 Cap. 1 — Documentos', q:'¿Con cuántos meses de anticipación mínima debe vencer el pasaporte para muchos países?', opts:['1 mes','3 meses','6 meses','12 meses'], correct:2, exp:'La mayoría de los países exige que el pasaporte tenga al menos 6 meses de vigencia desde la fecha de entrada al país.' },
+    { cap:'🧳 Cap. 2 — Equipaje', q:'Una tarifa básica de vuelo generalmente incluye...', opts:['Valija despachada + mochila','Solo mochila de mano','Dos valijas','Nada de equipaje'], correct:1, exp:'Las tarifas básicas o económicas suelen incluir solo una mochila de mano. La valija despachada generalmente tiene costo adicional.' },
+    { cap:'🔍 Cap. 5 — Seguridad', q:'¿Qué NUNCA hay que hacer en el control de seguridad?', opts:['Sacar la laptop','Bromear sobre armas o explosivos','Poner los zapatos en la bandeja','Sacar la bolsa de líquidos'], correct:1, exp:'Las bromas sobre armas, bombas o explosivos son tomadas muy en serio en aeropuertos internacionales y pueden tener consecuencias legales graves.' },
+    { cap:'🛂 Cap. 6 — Migraciones', q:'Si el oficial de migraciones te pregunta algo que no entendés, ¿qué hacés?', opts:['Decís que sí a todo','Salís corriendo','Pedís que repitan: "Could you repeat that?"','Te quedás callado'], correct:2, exp:'Podés pedir que repitan la pregunta con calma. Los oficiales están acostumbrados a viajeros que no hablan inglés perfectamente.' },
+    { cap:'🚪 Cap. 7 — Puerta', q:'Las puertas de embarque...', opts:['Nunca cambian','Siempre son las mismas que en el ticket','Pueden cambiar — hay que mirar las pantallas','Solo cambian en aeropuertos chicos'], correct:2, exp:'¡Las puertas pueden cambiar! Es fundamental revisar las pantallas de información regularmente durante la espera.' },
+    { cap:'🔄 Cap. 10 — Escalas', q:'¿Qué tiempo mínimo se recomienda entre vuelos en un aeropuerto grande?', opts:['30 minutos','1 hora','2 horas','5 horas'], correct:2, exp:'En aeropuertos grandes como Miami o Madrid se recomienda al menos 2 horas entre vuelos para hacer la conexión sin estrés.' },
+    { cap:'🛄 Cap. 11 — Llegada', q:'Si tu valija no aparece en la cinta, ¿cuándo hay que reclamar?', opts:['Al día siguiente','Antes de salir del aeropuerto','Una semana después','En el hotel'], correct:1, exp:'El reclamo de equipaje perdido debe hacerse ANTES de salir del aeropuerto. Una vez afuera, el proceso se complica mucho.' },
+    { cap:'🧳 Cap. 2 — Equipaje', q:'¿Qué nunca debería ir en la valija despachada?', opts:['La ropa','Los zapatos','El pasaporte y medicación','Los libros'], correct:2, exp:'Pasaporte, medicación, dinero, celular y documentos importantes deben ir siempre en el equipaje de mano, por si la valija se pierde.' },
+    { cap:'👨‍👩‍👧 Cap. 13 — Familia', q:'¿Cuándo hay que pedir asistencia para adultos mayores?', opts:['Al subir al avión','En el mismo aeropuerto el día del vuelo','Al comprar el pasaje o con 48 hs de anticipación','No hace falta pedirla'], correct:2, exp:'La asistencia especial (silla de ruedas, etc.) debe solicitarse al comprar el pasaje o con al menos 48 horas de anticipación para garantizar disponibilidad.' },
+    { cap:'🌍 Cap. 12 — Vocabulario', q:'¿Qué significa "Final Call" por el altavoz del aeropuerto?', opts:['El vuelo se canceló','Es el último llamado — tenés que apurarte','Llegó tu valija','El avión aterrizó'], correct:1, exp:'"Final Call" significa que es el último llamado para tu vuelo. Si lo escuchás con tu número de vuelo, tenés que ir a la puerta inmediatamente.' },
+  ],
+  2: [ // EXPERTO
+    { cap:'📋 Cap. 1 — Documentos', q:'¿Qué es un "formulario migratorio"?', opts:['El pasaporte','Un documento que algunos países exigen completar antes de ingresar','La tarjeta de embarque','El seguro de viaje'], correct:1, exp:'Algunos países exigen completar un formulario antes de llegar o al ingresar, declarando datos personales, motivo del viaje y lugar de hospedaje.' },
+    { cap:'🔄 Cap. 10 — Escalas', q:'Si perdés una conexión por demora de la aerolínea, ¿qué podés exigir?', opts:['Nada, es tu problema','Reubicación en el próximo vuelo sin costo','Solo una disculpa','Devolución del dinero automática'], correct:1, exp:'Cuando la demora es responsabilidad de la aerolínea, están obligados a reubicarte en el próximo vuelo disponible sin cargo adicional.' },
+    { cap:'🛂 Cap. 6 — Migraciones', q:'¿Por qué NUNCA hay que mentir en migraciones?', opts:['Porque hablan español','Porque tienen acceso a bases de datos y las mentiras pueden causar problemas graves','Porque son simpáticos','Porque te dan un regalo si decís la verdad'], correct:1, exp:'Los oficiales tienen acceso a información de múltiples bases de datos. Una mentira detectada puede resultar en deportación, prohibición de entrada o incluso cargos legales.' },
+    { cap:'✅ Cap. 4 — Check-in', q:'¿Cuándo suele abrir el check-in online?', opts:['72 horas antes','24 a 48 horas antes','1 semana antes','Solo el día del vuelo'], correct:1, exp:'La mayoría de las aerolíneas abren el check-in online entre 24 y 48 horas antes de la salida del vuelo.' },
+    { cap:'🧳 Cap. 2 — Equipaje', q:'¿Qué pasa si llevás en el equipaje de mano un envase de 200 ml que está casi vacío?', opts:['Lo dejan pasar igual','Lo retienen — importa lo que dice el envase, no lo que contiene','Podés explicarle al guardia','Solo importa si el líquido es peligroso'], correct:1, exp:'La regla es sobre el tamaño del envase, no la cantidad de líquido. Un envase de 200 ml que dice 200 ml será retenido aunque esté casi vacío.' },
+    { cap:'🛄 Cap. 11 — Llegada', q:'¿Qué controla la aduana (Customs)?', opts:['Solo tu pasaporte','Solo droga','Lo que ingresás al país: dinero, alimentos, medicamentos, productos','Solo electrónicos'], correct:2, exp:'La aduana controla todo lo que ingresás al país: dinero en efectivo superior a ciertos montos, alimentos, plantas, medicamentos en grandes cantidades, etc.' },
+    { cap:'🔍 Cap. 5 — Seguridad', q:'¿Dónde tiene que ir la bolsa de líquidos en el control de seguridad?', opts:['Dentro de la mochila','En el bolsillo de la campera','En una bandeja separada, visible','En el equipaje despachado'], correct:2, exp:'Los líquidos deben ir en una bandeja separada y visible para que el escáner los detecte claramente. Guardarlos dentro del bolso puede causar que detengan toda la mochila.' },
+    { cap:'🌍 Cap. 12 — Vocabulario', q:'¿Cuál es la diferencia entre "Departures" y "Arrivals"?', opts:['Son lo mismo','Departures = salidas, Arrivals = llegadas','Departures = nacionales, Arrivals = internacionales','Arrivals = salidas, Departures = llegadas'], correct:1, exp:'"Departures" es la zona de salidas (donde va quien viaja) y "Arrivals" es la zona de llegadas (donde van a buscar a alguien o donde llegás al destino).' },
+    { cap:'👨‍👩‍👧 Cap. 13 — Familia', q:'El servicio de "Menor No Acompañado" (UM)...', opts:['Se puede pedir el mismo día del vuelo','Sirve para que un guardia cuide la valija del menor','Acompaña al menor desde la entrega hasta que llega al adulto autorizado en destino','Es gratuito en todas las aerolíneas'], correct:2, exp:'El servicio UM (Unaccompanied Minor) garantiza que un representante de la aerolínea acompañe al menor en todo momento: desde que el adulto lo entrega hasta que llega al adulto autorizado en destino.' },
+    { cap:'🆘 Cap. 15 — Emergencias', q:'Si te cancelan el vuelo, ¿qué podés tener derecho a exigir?', opts:['Solo la devolución del dinero','Reubicación, hotel, comida y eventualmente compensación','Solo una disculpa','Nada — no tienen obligaciones'], correct:1, exp:'Según el país y la aerolínea, una cancelación puede dar derecho a reubicación en otro vuelo, alojamiento, alimentación y compensación económica. Siempre pedí todo por escrito.' },
+  ]
+};
+
+let selectedLevel = 0;
+let questions = [];
+let currentQ  = 0;
+let score     = 0;
+let correct   = 0;
+let answered  = false;
+
+function selectLevel(lvl, el) {
+  selectedLevel = lvl;
+  document.querySelectorAll('.level-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function startQuiz() {
+  questions = [...ALL_QUESTIONS[selectedLevel]].sort(() => Math.random() - 0.5);
+  currentQ = 0; score = 0; correct = 0; answered = false;
+
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('resultsScreen').style.display = 'none';
+  document.getElementById('gameArea').style.display = 'flex';
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = questions[currentQ];
+  answered = false;
+
+  // Progress
+  const pct = (currentQ / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Pregunta ${currentQ+1} de ${questions.length}`;
+  document.getElementById('progressScore').textContent = `${score} pts`;
+
+  // Question
+  document.getElementById('qChapter').textContent = q.cap;
+  document.getElementById('qNumber').textContent   = `Pregunta ${currentQ + 1}`;
+  document.getElementById('qText').textContent     = q.q;
+
+  // Options
+  const list = document.getElementById('optionsList');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn card';
+    btn.style.padding = '14px 18px';
+    btn.innerHTML = `<div class="option-letter">${letters[i]}</div><div class="option-text">${opt}</div>`;
+    btn.onclick = () => answer(i, btn);
+    list.appendChild(btn);
+  });
+
+  // Hide explanation & next
+  document.getElementById('explanation').classList.remove('show');
+  document.getElementById('explanation').innerHTML = '';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function answer(idx, btn) {
+  if (answered) return;
+  answered = true;
+
+  const q    = questions[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+
+  btns.forEach(b => b.classList.add('disabled'));
+
+  if (idx === q.correct) {
+    btn.classList.add('correct');
+    const pts = selectedLevel === 0 ? 10 : selectedLevel === 1 ? 15 : 20;
+    score += pts;
+    correct++;
+    document.getElementById('progressScore').textContent = `${score} pts`;
+  } else {
+    btn.classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+  }
+
+  // Show explanation
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = `<strong>💡 ¿Por qué?</strong> ${q.exp}`;
+  exp.classList.add('show');
+
+  // Show next
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = currentQ < questions.length - 1 ? 'Siguiente pregunta →' : 'Ver resultados →';
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('gameArea').style.display = 'none';
+  document.getElementById('progressFill').style.width = '100%';
+
+  const pct = Math.round((correct / questions.length) * 100);
+  let emoji, title, desc;
+
+  if (pct >= 90)      { emoji='🏆'; title='¡Viajero experto!'; desc='Impresionante. Podrías guiar a otros en el aeropuerto.'; }
+  else if (pct >= 70) { emoji='✈️'; title='¡Muy bien!'; desc='Estás muy preparado para viajar con confianza.'; }
+  else if (pct >= 50) { emoji='🧳'; title='¡Buen comienzo!'; desc='Ya tenés la base. Repasá la guía y volvé a intentarlo.'; }
+  else                { emoji='📖'; title='¡A repasar!'; desc='Volvé a leer la guía y vas a mejorar mucho. ¡Ánimo!'; }
+
+  document.getElementById('resultEmoji').textContent  = emoji;
+  document.getElementById('resultTitle').textContent  = title;
+  document.getElementById('resultScore').textContent  = `${score} pts`;
+  document.getElementById('resultDesc').textContent   = desc;
+  document.getElementById('breakCorrect').textContent = correct;
+  document.getElementById('breakWrong').textContent   = questions.length - correct;
+
+  document.getElementById('resultsScreen').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function replayQuiz() {
+  startQuiz();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showStart() {
+  document.getElementById('resultsScreen').style.display  = 'none';
+  document.getElementById('startScreen').style.display    = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
